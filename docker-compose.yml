@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "127.0.0.1:53:53/tcp"
+      - "127.0.0.1:53:53/udp"
+      - "127.0.0.1:67:67/udp"
+      - "127.0.0.1:80:80/tcp"
+      - "127.0.0.1:443:443/tcp"
+    environment:
+      TZ: 'Europe/London'
+      DNS1: 127.0.0.1#1053
+      DNS2: 127.0.0.1#1053
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+      # Volumes store your data between container upgrades
+    volumes:
+       - 'etc-pihole:/etc/pihole/'
+       - 'etc-dnsmasq.d:/etc/dnsmasq.d/'
+    # run `touch ./var-log/pihole.log` first unless you like errors
+    # - './var-log/pihole.log:/var/log/pihole.log'
+    dns:
+      - 127.0.0.1
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  coredns:
+    image: coredns/coredns
+    command: -conf /root/Corefile
+    restart: unless-stopped
+    secrets:
+      - source: Corefile
+        target: /root/Corefile
+    network_mode: service:pihole
+
+  unbound:
+    image: klutchell/unbound
+    network_mode: service:coredns
+
+secrets:
+  Corefile:
+    file: ./Corefile
+volumes:
+  etc-pihole:
+  etc-dnsmasq.d:
+

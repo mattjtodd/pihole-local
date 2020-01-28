@@ -1,0 +1,18 @@
+.:1053 {
+    forward . tls://9.9.9.9 tls://1.1.1.1 tls://149.112.112.112 tls://1.0.0.1 {
+       tls_servername quad9.net
+       health_check 30s
+    }
+    cache
+    log . "{remote}:{port} - {>id} {type} {class} {name} {local} {proto} {size} {>do} {>bufsize} {rcode} {>rflags} {rsize} {duration}"
+    errors
+}
+
+.:2053 {
+    forward . dns://127.0.0.1:5053 {
+       health_check 5s
+    }
+    cache
+    log . "{remote}:{port} - {>id} {type} {class} {name} {local} {proto} {size} {>do} {>bufsize} {rcode} {>rflags} {rsize} {duration}"
+    errors
+}
