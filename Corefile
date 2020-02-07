@@ -1,5 +1,5 @@
 .:1053 {
-    forward . tls://9.9.9.9 tls://1.1.1.1 tls://149.112.112.112 tls://1.0.0.1 {
+    forward . tls://9.9.9.9 tls://149.112.112.112 {
        tls_servername quad9.net
        health_check 30s
     }
