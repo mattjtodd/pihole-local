@@ -1,6 +1,10 @@
 .:1053 {
-    forward . tls://9.9.9.9 tls://149.112.112.112 {
-       tls_servername quad9.net
+    hosts {
+        192.168.1.1 router.asus.com
+        fallthrough
+    }
+    forward . tls://1.1.1.1 tls://1.0.0.1 {
+       tls_servername cloudflare-dns.com
        health_check 30s
     }
     cache
@@ -9,10 +13,21 @@
 }
 
 .:2053 {
+    hosts {
+        192.168.1.1 router.asus.com
+        fallthrough
+    }
     forward . dns://127.0.0.1:5053 {
        health_check 5s
     }
     cache
     log . "{remote}:{port} - {>id} {type} {class} {name} {local} {proto} {size} {>do} {>bufsize} {rcode} {>rflags} {rsize} {duration}"
     errors
+}
+
+router.asus.com:1053 {
+    hosts {
+        192.168.1.1 router.asus.com
+        fallthrough
+    }
 }
